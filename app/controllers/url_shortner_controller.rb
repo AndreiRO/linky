@@ -19,13 +19,21 @@ class UrlShortnerController < ActionController::Base
   end
 
   def short
-    url = params[:url]
-    @link = url[:link]
-    @short = SecureRandom.hex[0..5]
+    u = params[:url]
+    @link = u[:link]
+		
+		urldata = CSV.open(URLS)
+    entity = urldata.select {|e| !e.empty? and e[1] == @link}[0]
+		
+		if not entity or entity == [] then
+			@short = SecureRandom.hex[0..5]
 
-    CSV.open(URLS, 'w') do |csv_object|
-        csv_object << [@short, @link]
-    end
+			CSV.open(URLS, 'a') do |csv_object|
+				csv_object << [@short, @link]
+    	end
+		else
+			@short = entity[0]
+		end
 
     redirect_to({:action => :display, :id => @short})
   end
@@ -36,12 +44,11 @@ class UrlShortnerController < ActionController::Base
       urldata = CSV.open(URLS)
       entity = urldata.select {|e| !e.empty? and e[0] == @shortened}[0]
 
-      if entity and !entity.empty? then
-        redirect_to entity[1]
-        return ;
-      end
+    	if entity and !entity.empty? then							
+      	redirect_to entity[1]
+      	return ;
+    	end
     end
-
     render 'index'
   end
 
