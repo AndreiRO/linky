@@ -1,0 +1,6 @@
+<h1>Short your urls now</h1>
+
+<%= form_tag({:action => :short}) do %>
+  <%= text_field :url, :link %>  
+  <%= submit_tag "Linkyfy it" %> 
+<%end%>

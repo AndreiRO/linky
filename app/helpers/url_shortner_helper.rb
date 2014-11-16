@@ -1,0 +1,2 @@
+module UrlShortnerHelper
+end
